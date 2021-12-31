@@ -33,3 +33,14 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Local overrides of environment-specific settings.
+.env.development.local
+# Local overrides of environment-specific settings.
+.env.test.local
+# Local overrides of environment-specific settings.
+.env.production.local
+# Local overrides. This file is loaded for all environments except test.
+.env.local
+# The original
+.env
