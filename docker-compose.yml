@@ -1,14 +1,13 @@
 version: "3.9"
 
 networks:
-  nologo_proxynet:
-    external: true
-  nologo_internal:
+  proxynet:
+    external: false
+  internalnet:
     external: false
 
 volumes:
-  nologo_ruby_bundle:
-    external: true
+  ruby_bundle:
   db_data:
   letsencrypt:
   redis_data:
@@ -25,7 +24,7 @@ services:
       - --api.debug=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=nologo_proxynet
+      - --providers.docker.network=proxynet
       - --entrypoints.web.address=:3000
       - --certificatesresolvers.mytlschallenge.acme.httpChallenge.entrypoint=web
       - --certificatesresolvers.mytlschallenge.acme.email=ryantgray@gmail.com
@@ -34,37 +33,37 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - letsencrypt:/letsencrypt
     networks:
-      - nologo_proxynet
-  nologo_app:
+      - proxynet
+  app:
     image: monitorbot.the4909.net:5050/goat/dockerfiles/rails-7.0.0:latest
     environment:
       - REDIS_URL=redis://redis:6379/0
       - REDIS_URL_SIDEKIQ=redis://redis:6379/0
     volumes:
-      - nologo_ruby_bundle:/usr/local/bundle
+      - ruby_bundle:/usr/local/bundle
       - ./:/app
     working_dir: /app
     networks:
-      - nologo_proxynet
-      - nologo_internal
+      - proxynet
+      - internalnet
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nologo_app-router.entrypoints=web
-      # - traefik.http.routers.nologo_app-router.rule=Host(`goatbot.the4909.net`) && PathPrefix(`/documentation`)
-      - traefik.http.routers.nologo_app-router.rule=Host(`goatbot.the4909.net`)
-      - traefik.http.routers.nologo_app-router.service=nologo_app-service
-      - traefik.http.services.nologo_app-service.loadbalancer.server.port=3000
+      - traefik.http.routers.app-router.entrypoints=web
+      # - traefik.http.routers.app-router.rule=Host(`goatbot.the4909.net`) && PathPrefix(`/documentation`)
+      - traefik.http.routers.app-router.rule=Host(`${FQDN}`)
+      - traefik.http.routers.app-router.service=app-service
+      - traefik.http.services.app-service.loadbalancer.server.port=3000
   # sidekiq:
   #   image: monitorbot.the4909.net:5050/goat/dockerfiles/rails-7.0.0:latest
   #   environment:
   #     - REDIS_URL=redis://redis:6379/0
   #     - REDIS_URL_SIDEKIQ=redis://redis:6379/0
   #   volumes:
-  #     - nologo_ruby_bundle:/usr/local/bundle
+  #     - ruby_bundle:/usr/local/bundle
   #     - ./:/app
   #   working_dir: /app
   #   networks:
-  #     - nologo_internal
+  #     - internalnet
   #   labels:
   #     - traefik.enable=false
   #   command: bundle exec sidekiq
@@ -75,7 +74,7 @@ services:
   #   environment:
   #     POSTGRES_PASSWORD: password
   #   networks:
-  #     - nologo_internal
+  #     - internalnet
   redis:
     image: redis:alpine3.15
     volumes:
@@ -83,4 +82,4 @@ services:
     labels:
       - traefik.enable=false
     networks:
-      - nologo_internal
+      - internalnet
