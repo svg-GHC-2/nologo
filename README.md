@@ -21,4 +21,10 @@ Things you may want to cover:
 
 * Deployment instructions
 
-* ...
+Things to do before starting the application for the first time:
+1. `docker-compose run --rm app bundle install`
+2. `docker-compose run --rm web bundle exec rails db:setup`
+3. `docker-compose run --rm web bundle exec rails db:migrate`
+   
+To start the application:
+`docker-compose up -d`
