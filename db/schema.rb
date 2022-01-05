@@ -10,11 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_31_233216) do
+ActiveRecord::Schema.define(version: 2022_01_03_190840) do
 
   create_table "artifacts", force: :cascade do |t|
     t.string "name"
     t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "markers", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
