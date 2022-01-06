@@ -4,4 +4,6 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   get "/goats", to: "goats#index"
+
+  resources :markers
 end
