@@ -44,3 +44,5 @@
 .env.local
 # The original
 .env
+
+.DS_Store
